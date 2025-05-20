@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/x-icon" href="/assets/brand-icon.svg">
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Links To All Style Files -->
+    <link rel="stylesheet" href="./main.css">
+
+    <title>CODINCO | Pricing</title>
+
+    <style>
+        /* Add your CSS here(optional) */
+        .pricing{
+            padding-block: 5rem;
+            display:grid;
+            grid-template-columns: repeat(3,1fr);
+            gap:2rem;
+            grid-template-areas: 
+            "h1 h1 h1"
+            "basic premium luxury";
+        } 
+
+        .pricing h1{
+            grid-area: h1;
+            text-align: center;
+        }
+        .pricing h1 span{
+            color:var(--highlight);
+        }
+        .pricing .card{
+            background-color: var(--background-dark);
+            transition: transform 0.2s ease-out;
+            cursor:pointer;
+            padding: 2rem;
+            border-radius: 1rem;
+        }
+
+        .pricing .card:hover{
+            transform: scale(1.01);
+        }
+        .pricing .card:nth-of-type(1){
+            grid-area: basic;
+        }
+        .pricing .card:nth-of-type(2){
+            grid-area: premium;
+        }
+        .pricing .card:nth-of-type(3){
+            grid-area: luxury;
+        }
+
+        .pricing .card h3{
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: var(--highlight);
+            text-align: center;
+        }
+
+        .pricing .card .price {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary);
+        }
+        
+        .pricing .card .date-time {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--white-light);
+            font-size: 0.9rem;
+        }
+
+        .pricing .fa-check{
+            color:var(--success);
+            margin-right: 0.5rem;
+        }
+        .pricing .fa-xmark{
+            color:var(--failure);
+            margin-right: 0.5rem;
+        }
+        
+        .pricing .features {
+            margin-bottom: 2rem;
+        }
+        
+        .pricing .features p {
+            margin-bottom: 0.8rem;
+        }
+        
+        .why-choose {
+            background-color: var(--background-dark);
+            padding: 3rem;
+            margin: 3rem 0;
+            border-radius: 1rem;
+            grid-column: 1 / -1;
+        }
+        
+        .why-choose h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--highlight);
+        }
+        
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .benefit-item {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .benefit-item i {
+            font-size: 2rem;
+            color: var(--highlight);
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .modal{
+            max-height: 50vh;
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            background-color: var(--background-dark);
+            padding:2rem;
+            border-radius: 2rem;
+            border:none;
+            border:2px solid var(--background-light);
+        }
+
+        .modal::backdrop{
+            background:#0008;
+        }
+        .modal::-webkit-scrollbar{
+            width:0.5em;
+        }
+        .modal::-webkit-scrollbar-track{
+            background-color: transparent !important;
+            margin-block: 3em;
+        }
+        .modal::-webkit-scrollbar-thumb{
+            background-color: var(--background-light);
+            border-radius: 50px;
+            border:4px solid transparent !important;
+        }
+
+        .modal h3{
+            margin-bottom: 2rem;
+        }
+        .modal h3 span{
+            font-size: 1rem;
+            color:var(--highlight);
+            text-transform: normalize;
+        }
+        .modal h5{
+            color:var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+        .modal p{
+            margin-bottom: 2rem;
+            font-size: var(--nav-link);
+        }
+
+        /* Media queries for Pricing Page */
+        @media screen and (max-width:1020px){
+            /* medium screen */
+            .pricing {
+                grid-template-columns: repeat(2,1fr);  
+                grid-template-areas: 
+                "h1 h1"
+                "basic premium"
+                "luxury luxury";
+            } 
+            
+            .benefits {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media screen and (max-width: 600px){
+            /* smaller screen */
+            .pricing {
+                grid-template-columns: repeat(1,1fr);
+                grid-template-areas: 
+                "h1"
+                "basic"
+                "premium"
+                "luxury";
+            }  
+            
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <img src="c:\Users\AM BUSINESS\Downloads\Purple_and_White_Modern_Computer_Service___Repair_Logo__1_-removebg-preview.png" alt="CODINCO Logo">
+            <ul>
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/destination.html">Curriculum</a></li>
+                <li><a href="/feedback.html">Testimonials</a></li>
+                <li><a href="/">Pricing</a></li>
+            </ul>
+            <div id="login-container">
+                <a href="./login.html" id="loginBtn"><i class="fa-solid fa-user" id="login-btn"></i></a>
+                <div style="display: none;">
+                    <a href='./checkout.html'><i class="fa-solid fa-cart-shopping" style="margin-right:1rem"></i></a>
+                    <a href="/" id="logout-btn" class='btn-small' style='border-radius:50px;color:var(--white)'>Log Out</a>
+                </div>       
+            </div>
+            <div class="responsive-nav">
+                <i class="fa-solid fa-bars" style="color:var(--white-light)"></i>
+                <div class="responsive-nav-content">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/destination.html">Curriculum</a></li>
+                        <li><a href="/feedback.html">Testimonials</a></li>
+                        <li><a href="/prices.html">Pricing</a></li>
+                    </ul>
+                    <div id="login-container">
+                        <a href="./login.html" id="loginBtn"><i class="fa-solid fa-user" id="login-btn"></i></a>
+                        <div style="display: none;">
+                            <a href='./checkout.html'><i class="fa-solid fa-cart-shopping" style="margin-right:1rem"></i></a>
+                            <a href="/" id="logout-btn" class='btn-small' style='border-radius:50px;color:var(--white)'>Log Out</a>
+                        </div>       
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="container pricing fade-in" id="media">
+            <h1>Join Our <span>Beginner Coding Bootcamp</span></h1>
+            <div class="card">
+                <h3>Basic Plan</h3>
+                <div class="price">Rs. 1000/month</div>
+                <div class="date-time">
+                    Starts: 1 June 2025<br>
+                    Time: 9:00PM-10:00PM
+                </div>
+                <div class="features">
+                    <p><i class="fa-solid fa-check"></i> HTML & CSS Fundamentals</p>      
+                    <p><i class="fa-solid fa-check"></i> JavaScript Basics</p>
+                    <p><i class="fa-solid fa-check"></i> Python Introduction</p>
+                    <p><i class="fa-solid fa-xmark"></i> TypeScript</p>
+                    <p><i class="fa-solid fa-xmark"></i> Next.js Framework</p>
+                    <p><i class="fa-solid fa-xmark"></i> Advanced Projects</p>
+                    <p><i class="fa-solid fa-xmark"></i> Career Support</p>
+                </div>
+                <button class="btn open-button">Enroll Now</button>
+                <dialog class="modal">
+                    <h3>Basic Plan <span>Rs. 1000/month</span></h3>
+                    <h5>What's Included</h5>
+                    <p>Our Basic Plan is perfect for absolute beginners who want to dip their toes into the world of coding. You'll learn the fundamentals of web development including HTML, CSS, and JavaScript, along with an introduction to Python programming.</p>
+                    <h5>Schedule</h5>
+                    <p>Classes run from 1 June 2025, every evening from 9:00PM to 10:00PM. This plan includes 3 live sessions per week with access to recorded lectures and basic coding exercises.</p>
+                    <h5>Perfect For</h5>
+                    <p>Beginners with no prior coding experience who want to explore programming basics at an affordable price point.</p>
+                    <button class="btn-small close-modal"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                </dialog>
+            </div>
+            <div class="card">
+                <h3>Premium Plan</h3>
+                <div class="price">Rs. 2000/month</div>
+                <div class="date-time">
+                    Starts: 1 June 2025<br>
+                    Time: 9:00PM-10:00PM
+                </div>
+                <div class="features">
+                    <p><i class="fa-solid fa-check"></i> Everything in Basic</p>      
+                    <p><i class="fa-solid fa-check"></i> TypeScript</p>
+                    <p><i class="fa-solid fa-check"></i> Next.js Framework</p>
+                    <p><i class="fa-solid fa-check"></i> Intermediate Projects</p>
+                    <p><i class="fa-solid fa-xmark"></i> Advanced Projects</p>
+                    <p><i class="fa-solid fa-xmark"></i> 1-on-1 Mentoring</p>
+                    <p><i class="fa-solid fa-check"></i> Basic Career Support</p>
+                </div>
+                <button class="btn open-button">Enroll Now</button>
+                <dialog class="modal">
+                    <h3>Premium Plan <span>Rs. 2000/month</span></h3>
+                    <h5>What's Included</h5>
+                    <p>The Premium Plan builds on the Basic Plan by adding TypeScript and Next.js to your skill set. You'll work on more complex projects that simulate real-world applications, giving you practical experience that goes beyond tutorial-level coding.</p>
+                    <h5>Schedule</h5>
+                    <p>Classes run from 1 June 2025, every evening from 9:00PM to 10:00PM. This plan includes 4 live sessions per week with additional project work and code reviews.</p>
+                    <h5>Perfect For</h5>
+                    <p>Students who have some basic coding knowledge or have completed the Basic Plan and want to take their skills to the next level with more advanced technologies.</p>
+                    <button class="btn-small close-modal"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                </dialog>
+            </div>
+            <div class="card">
+                <h3>Luxury Plan</h3>
+                <div class="price">Rs. 3000/month</div>
+                <div class="date-time">
+                    Starts: 1 June 2025<br>
+                    Time: 9:00PM-10:00PM
+                </div>
+                <div class="features">
+                    <p><i class="fa-solid fa-check"></i> Everything in Premium</p>      
+                    <p><i class="fa-solid fa-check"></i> Advanced Projects</p>
+                    <p><i class="fa-solid fa-check"></i> 1-on-1 Mentoring</p>
+                    <p><i class="fa-solid fa-check"></i> Portfolio Review</p>
+                    <p><i class="fa-solid fa-check"></i> Resume Building</p>
+                    <p><i class="fa-solid fa-check"></i> Interview Prep</p>
+                    <p><i class="fa-solid fa-check"></i> Job Placement Assistance</p>
+                </div>
+                <button class="btn open-button">Enroll Now</button>
+                <dialog class="modal">
+                    <h3>Luxury Plan <span>Rs. 3000/month</span></h3>
+                    <h5>What's Included</h5>
+                    <p>Our comprehensive Luxury Plan includes everything from the Premium Plan plus advanced project work, personalized mentoring, and full career support. You'll build portfolio-worthy projects, receive resume and interview preparation, and get job placement assistance to kickstart your tech career.</p>
+                    <h5>Schedule</h5>
+                    <p>Classes run from 1 June 2025, every evening from 9:00PM to 10:00PM. This plan includes daily live sessions, code reviews, and regular 1-on-1 mentoring sessions.</p>
+                    <h5>Perfect For</h5>
+                    <p>Serious learners who want to transition into a tech career and need comprehensive training and career support to land their first developer job.</p>
+                    <button class="btn-small close-modal"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                </dialog>
+            </div>
+            
+            <div class="why-choose">
+                <h2>WHY CHOOSE CODINCO</h2>
+                <div class="benefits">
+                    <div class="benefit-item">
+                        <i class="fas fa-book-open"></i>
+                        <h4>COMPREHENSIVE CURRICULUM</h4>
+                        <p>From basics to advanced concepts in full stack development</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-user-clock"></i>
+                        <h4>FLEXIBLE LEARNING</h4>
+                        <p>Evening classes that fit your schedule</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-users"></i>
+                        <h4>COLLABORATIVE PROJECTS</h4>
+                        <p>Work on real-world projects with peers</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-briefcase"></i>
+                        <h4>CAREER SUPPORT</h4>
+                        <p>Get help with job placement and interviews</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <section class="articles"></section>
+        <div class="container">
+            <h1>Get started and early <span>Update</span> about our bootcamp</h1>
+            <!-- Copy this searchbox If you want to use it somewhere else -->
+            <div class="searchbox">
+                <input  type="text" placeholder="Enter your email">
+                <button class="btn" id="cta">Get Started</button>
+            </input>
+            </div>
+            <hr>
+            <div class="footer">
+                <img src="c:\Users\AM BUSINESS\Downloads\Purple_and_White_Modern_Computer_Service___Repair_Logo__1_-removebg-preview.png" alt="CODINCO Logo">
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/destination.html">Curriculum</a></li>
+                    <li><a href="/feedback.html">Testimonials</a></li>
+                    <li><a href="/">Pricing</a></li>
+                </ul>
+                <p><i class="fa-regular fa-copyright"></i> 2025 CODINCO</p>
+            </div>
+            <div class="socials">
+                <div class="social">
+                    <a href="https://www.instagram.com/codinco" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+                <div class="social">
+                    <a href="https://twitter.com/codinco" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+                <div class="social">
+                    <a href="https://www.facebook.com/codinco" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+<script src="main.js"></script>
+<script>
+    // Write all you JS code below
+    let openButtons= Array.from(document.querySelectorAll('.open-button'));
+    let closeButtons= Array.from(document.querySelectorAll('.close-modal'));
+    let modals=Array.from(document.querySelectorAll('.modal'));
+
+    for(let i=0;i<openButtons.length;i++){
+        openButtons[i].addEventListener('click',()=>{
+            modals[i].showModal();
+        })
+    }
+    for(let i=0;i<closeButtons.length;i++){
+        closeButtons[i].addEventListener('click',()=>{
+            modals[i].close();
+        })
+    }
+    
+</script>

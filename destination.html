@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODINCO - Python Curriculum</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/x-icon" href="/assets/brand-icon.svg">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Links To All Style Files -->
+    <link rel="stylesheet" href="./main.css">
+</head>
+<style>
+    main{ position: relative; }
+    .btn-small{ background-image: none; background-color: var(--primary);}
+    .curriculum{
+        padding-block: 2rem;
+        display: grid;
+        grid-template-columns:1fr 1fr 1fr 1fr;
+        grid-template-areas: 
+        "toolbar toolbar toolbar toolbar"
+        "sidebar maincontent maincontent maincontent";
+        gap:3rem 2rem;
+    }
+    .toolbar{
+        width:100%;
+        grid-area: toolbar;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--background-light);
+    }
+    .col-btns{ display: flex; }
+    .col-btn{ margin-left: 0.5rem; color:var(--background-light); background-color: transparent; border:2px solid var(--background-light);}
+    .col-active{ color:var(--white); background-color: var(--primary); border-color: var(--primary);}
+    .sidebar{
+        display: flex; flex-direction: column; border: 4px solid var(--white); border-radius: 1rem;
+        padding-block: 2rem; padding-inline: 1rem; align-self: flex-start;
+    }
+    .sidebar hr{ margin-block: 1rem; }
+    .sidebar>div>h4{ margin-bottom: 0.75rem; }
+    .sidebar .btn-small{ font-size: 0.75rem; display: inline; }
+    .sidebar .btn-small:first-of-type{ margin-right: 0.5rem; }
+    .sidebar .btn-small:last-of-type{ margin: 0; }
+    .sidebar .filter-level > select{
+        padding:0.25rem 0.5rem; background-color: transparent !important; border: 2px solid var(--white-light);
+        color: var(--white-light); cursor: pointer; border-radius: 8px;
+    }
+    .sidebar .filter-level > select >option{
+        background-color: var(--background-light); color:var(--white); cursor: pointer;
+    }
+    .filter-rating i{ color: var(--highlight);}
+    .filter-rating>div{ cursor: pointer;}
+    .filter-duration>.filter-duration-option{
+        cursor: pointer; transition: color 0.25s ease-out; color: var(--white-light);
+    }
+    .filter-duration>.filter-duration-option:hover{ color:var(--primary);}
+    .main-content{
+        grid-area: maincontent; position: relative; min-height: 50vh; padding: 2rem;
+        border-radius: 2rem; border: 8px solid var(--white);
+    }
+    #blank{
+        display: grid; grid-template-columns: repeat(2,1fr); gap: 2rem 1rem;
+        margin-bottom: 2rem; padding-bottom: 1rem;
+    }
+    #loader{
+        display:none; width: 150px; height: 150px; position: absolute; top: 50%; left:50%;
+        transform: translate(-50%,-50%); z-index: 10000;
+    }
+    .course-card{
+        background-color: var(--background-dark); overflow: hidden; border-radius: 2rem; border:2px solid var(--background-light)
+    }
+    .course-card img{ object-fit: cover; max-height: 250px; height: 200px; width: 100%;}
+    .course-card> div{ padding:1rem; position: relative;}
+    .course-card>div .fa-laptop-code{
+        position: absolute; bottom: -25%; right: -2%; font-size: 6rem; color:var(--background-light); opacity: 0.2;
+    }
+    .course-card> div h4{ display: inline; margin-right: 0.5rem; margin-bottom: 0.5rem;}
+    .course-rating{ display:inline; color:var(--highlight); font-size: 0.75rem;}
+    .course-card> div p{ color:var(--white-light); margin-bottom: 1rem;}
+    .course-card>div p span{ font-size: 2rem; font-weight: bolder; color:var(--highlight);}
+    .view-details{
+        color:var(--primary); background-color: transparent; border:1px solid var(--primary);
+        margin-right: 0.5rem; margin-bottom: 0.5rem;
+    }
+    #course-dialog{
+        max-height: 80vh; width:min(60rem,100%); position: fixed; top:50%; left:50%;
+        transform: translate(-50%,-50%); background-color: var(--background-dark); padding:2rem;
+        border-radius: 2rem; border:none; border:2px solid var(--background-light); display:none;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-areas: 
+        "back back back back"
+        "mainImage mainImage mainImage mainImage"
+        "imgRow imgRow imgRow imgRow"
+        "Desc Desc Desc Desc"
+        "Projects Projects Projects Projects"
+        "Topics Topics Topics Topics"
+        "back2 back2 back2 back2";
+        gap:1rem; overflow-x: hidden;
+    }
+    #course-dialog::backdrop{ background:#0008; }
+    #course-dialog::-webkit-scrollbar{ width:0.5em;}
+    #course-dialog::-webkit-scrollbar-track{ background-color: transparent !important; margin-block: 3em;}
+    #course-dialog::-webkit-scrollbar-thumb{ background-color: var(--background-light); border-radius: 50px; border:4px solid transparent !important;}
+    .close-course:first-of-type{ grid-area: back; grid-column: span 1;}
+    .close-course:last-of-type{ grid-area: back2; grid-column: span 1;}
+    #course-img-container{ width:100%; grid-area: mainImage; height: 30rem; border:1rem; overflow: hidden !important;}
+    #course-img-container img{ height: 30rem; width: 100%;}
+    #course-img-container img, #course-img-row img{ object-fit: cover; border-radius: 2rem;}
+    #course-img-row{
+        grid-area:imgRow; display:flex; align-items: center; justify-content: space-between;
+        gap:1rem; margin-bottom: 2rem;
+    }
+    #course-img-row img{ height: 200px; width: 24%; border-radius: 1rem;}
+    #course-description{ grid-area: Desc; margin-bottom: 1rem;}
+    #course-description>*{ margin-block:0.5rem;}
+    #course-projects{ grid-area: Projects; margin-bottom: 1rem;}
+    #course-topics{ grid-area: Topics; margin-bottom: 1rem;}
+    #course-projects>h4, #course-topics>h4{ margin-bottom: 1rem;}
+    #course-projects>div, #course-topics>div{
+        width: 100%; display: flex; align-items: center; gap:1rem;
+    }
+    #course-projects>div>*, #course-topics>div>*{ margin-right: 0.5rem;}
+    #course-projects>div:last-child, #course-topics>div:last-child{ margin:0;}
+    .course-content-card{ width:33%; height: 200px; overflow: hidden; position: relative;}
+    .course-content-card h5{ opacity: 0; cursor: pointer; transition:opacity 1s ease-out;}
+    .course-content-card:hover h5{
+        opacity: 1; position: absolute; top: 50%; left:50%; transform:translate(-50%, -50%) !important;
+        z-index: 1; color:var(--white); background-color: #0009; display:grid; place-items: center;
+        overflow: hidden !important; padding:1rem; border-radius: 1rem;
+    }
+    #course-projects>div img, #course-topics>div img{
+        width: 100%; height: 100%; border-radius: 1rem; object-fit: cover;
+    }
+    #pagination-container{
+        display:flex; align-items: center; justify-content: center; border-top: 1px solid var(--background-light); padding-top: 2rem;
+    }
+    #pagination-container .btn-small{
+        color:var(--background-light); background-color: transparent; border:2px solid var(--background-light); width: 4rem; background-image:none;
+    }
+    #pagination-container>*{ margin-inline: 0.25rem;}
+    #pagination-container .btn-small.page-active{
+        color:var(--white); background-color: var(--primary); border-color: var(--primary);
+    }
+    @media (max-width: 768px) {
+        .curriculum {
+            grid-template-columns: 1fr;
+            grid-template-areas: 
+                "toolbar"
+                "sidebar"
+                "maincontent";
+        }
+        #blank { grid-template-columns: 1fr; }
+        .course-card img { height: 150px; }
+        #course-dialog {
+            width: 90%;
+            grid-template-areas: 
+                "back back back back"
+                "mainImage mainImage mainImage mainImage"
+                "Desc Desc Desc Desc"
+                "Projects Projects Projects Projects"
+                "Topics Topics Topics Topics"
+                "back2 back2 back2 back2";
+        }
+        #course-img-row { display: none; }
+    }
+</style>
+<body>
+    <header>
+        <nav class="container">
+            <img src="c:\Users\AM BUSINESS\Downloads\Purple_and_White_Modern_Computer_Service___Repair_Logo__1_-removebg-preview.png" alt="CODINCO Logo">
+            <ul>
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/curriculum.html">Curriculum</a></li>
+                <li><a href="/testimonials.html">Testimonials</a></li>
+                <li><a href="/pricing.html">Pricing</a></li>
+            </ul>
+            <div id="login-container">
+                <a href="./login.html" id="loginBtn"><i class="fa-solid fa-user" id="login-btn"></i></a>
+                <div style="display: none;">
+                    <a href='./checkout.html'><i class="fa-solid fa-cart-shopping" style="margin-right:1rem"></i></a>
+                    <a href="/" id="logout-btn" class='btn-small' style='border-radius:50px;color:var(--white)'>Log Out</a>
+                </div>       
+            </div>
+        </nav>
+    </header>
+    <main>
+        <dialog id="course-dialog">
+            <button id="close-course" class="btn-small view-details "><i class="fa-solid fa-arrow-left" ></i> Back</button>
+            <div id="course-img-container"></div>
+            <div id="course-img-row"></div>
+            <div id="course-description"></div>
+            <div id="course-projects"></div>
+            <div id="course-topics"></div>
+            <button id="close-course-bottom" class="btn-small view-details "><i class="fa-solid fa-arrow-left" ></i> Back</button>
+        </dialog>
+        <section class="container curriculum">
+            <div class="toolbar">
+                <div class="searchbox" id="mainsearch">
+                    <input type="text" placeholder="Search courses...">
+                    <button class="btn-small">Search</button>
+                </div>
+                <div class="col-btns">
+                    <button class="col-btn btn-small col-active" id="2-col">2</button>
+                    <button class="col-btn btn-small" id="3-col">3</button>
+                </div>
+            </div>
+            <div class="sidebar">
+                <div class="filter-rating">
+                    <h4>Filter by Rating</h4>
+                    <div class="five" title="> 4/5 Stars" data="5">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>                    
+                    <div class="four" title="> 3/5 Stars" data="4">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <div class="three" title="> 2/5 Stars" data="3">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <div class="two" title="> 1/5 Stars" data="2">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                </div>
+                <hr>
+                <div class="filter-duration">
+                    <h4>Filter by Duration</h4>
+                    <div class="filter-duration-option" data-value="8 weeks">8 Week Intensive</div>
+                    <div class="filter-duration-option" data-value="6 weeks">6 Week Bootcamp</div>
+                    <div class="filter-duration-option" data-value="4 weeks">4 Week Course</div>
+                    <div class="filter-duration-option" data-value="2 weeks">2 Week Workshop</div>
+                </div>
+                <hr>
+                <div class="filter-level">
+                    <h4>Filter by Level</h4>
+                    <select id="level">
+                        <option value="">All Levels</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+                <hr>
+                <div>
+                    <h4>Sort By Price</h4>
+                    <button id="lowToHigh" class="btn-small">Low To High</button>
+                    <button id="highToLow" class="btn-small">High To Low</button>
+                </div>
+            </div>
+            <div class="main-content">
+                <img src="./assets/Loader.svg" alt="loader" id="loader">
+                <div id="blank"></div>
+                <div id="pagination-container"></div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <section class="articles"></section>
+        <div class="container">
+            <h1>Start learning today with our <span>Python Bootcamp</span></h1>
+            <div class="searchbox">
+                <input type="text" placeholder="Enter your email">
+                <button class="btn" id="cta">Get Started</button>
+            </div>
+            <hr>
+            <div class="footer">
+                <img src="c:\Users\AM BUSINESS\Downloads\Purple_and_White_Modern_Computer_Service___Repair_Logo__1_-removebg-preview.png" alt="CODINCO Logo">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/curriculum.html">Curriculum</a></li>
+                    <li><a href="/testimonials.html">Testimonials</a></li>
+                    <li><a href="/pricing.html">Pricing</a></li>
+                </ul>
+                <p><i class="fa-regular fa-copyright"></i> 2025 CODINCO</p>
+            </div>
+            <div class="socials">
+                <div class="social">
+                    <a href="https://www.instagram.com/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+                <div class="social">
+                    <a href="https://twitter.com/" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+                <div class="social">
+                    <a href="https://www.facebook.com/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+<script>
+// Sample course data - in a real app, this would come from an API
+const courses = [
+    {
+        id: 1,
+        name: "Python Fundamentals",
+        duration: "4 weeks",
+        description: "Master the basics of Python programming with this comprehensive beginner course. Learn syntax, data structures, and basic algorithms.",
+        topics: ["Variables & Data Types", "Control Structures", "Functions", "File Handling"],
+        projects: ["Calculator App", "To-Do List", "Weather CLI Tool"],
+        skills: ["Problem Solving", "Debugging", "Basic Algorithms"],
+        price: 2500,
+        rating: 4,
+        level: "Beginner",
+        img: "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80"
+    },
+    {
+        id: 2,
+        name: "Web Development with Django",
+        duration: "6 weeks",
+        description: "Build dynamic web applications using Django framework. Learn MVC architecture, authentication, and database integration.",
+        topics: ["Django ORM", "Templates", "Views & URLs", "Forms"],
+        projects: ["Blog Platform", "E-commerce Site", "Social Media App"],
+        skills: ["Backend Development", "Database Design", "API Creation"],
+        price: 3500,
+        rating: 5,
+        level: "Intermediate",
+        img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+        id: 3,
+        name: "Data Science with Python",
+        duration: "8 weeks",
+        description: "Learn data analysis, visualization, and machine learning using Python's powerful libraries like Pandas, NumPy, and Scikit-learn.",
+        topics: ["Data Cleaning", "Visualization", "Statistical Analysis", "ML Basics"],
+        projects: ["Stock Market Analysis", "Customer Segmentation", "Sentiment Analysis"],
+        skills: ["Data Wrangling", "Statistical Modeling", "Predictive Analytics"],
+        price: 4500,
+        rating: 5,
+        level: "Advanced",
+        img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1115&q=80"
+    },
+    {
+        id: 4,
+        name: "Automation with Python",
+        duration: "2 weeks",
+        description: "Automate repetitive tasks and increase your productivity with Python scripting.",
+        topics: ["Web Scraping", "File Automation", "GUI Automation", "Task Scheduling"],
+        projects: ["Web Scraper", "File Organizer", "Email Automation"],
+        skills: ["Scripting", "Process Automation", "Workflow Optimization"],
+        price: 1500,
+        rating: 4,
+        level: "Beginner",
+        img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+    }
+];
+
+// DOM Elements
+const blankContainer = document.getElementById('blank');
+const courseDialog = document.getElementById('course-dialog');
+const closeCourseBtn = document.getElementById('close-course');
+const closeCourseBottomBtn = document.getElementById('close-course-bottom');
+const loader = document.getElementById('loader');
+const searchInput = document.querySelector('#mainsearch input');
+const searchBtn = document.querySelector('#mainsearch button');
+const col2Btn = document.getElementById('2-col');
+const col3Btn = document.getElementById('3-col');
+let currentCols = 2;
+
+// Display courses on page load
+document.addEventListener('DOMContentLoaded', () => {
+    displayCourses(courses);
+    setGridColumns(currentCols);
+});
+
+// Display courses in the grid
+function displayCourses(coursesToShow) {
+    blankContainer.innerHTML = '';
+    coursesToShow.forEach(course => {
+        const card = createCourseCard(course);
+        blankContainer.appendChild(card);
+    });
+    setGridColumns(currentCols);
+}
+
+// Create course card HTML
+function createCourseCard(course) {
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    card.innerHTML = `
+        <img src="${course.img}" alt="${course.name}">
+        <div>
+            <h4>${course.name}</h4>
+            <span class="course-rating">
+                ${'<i class="fa-solid fa-star"></i>'.repeat(Math.floor(course.rating))}
+                ${'<i class="fa-regular fa-star"></i>'.repeat(5 - Math.floor(course.rating))}
+            </span>
+            <p>${course.description.substring(0, 100)}...</p>
+            <p>Duration: <span>${course.duration}</span></p>
+            <p>Price: <span>Rs.${course.price}</span></p>
+            <button class="btn-small view-details" data-id="${course.id}">View Details</button>
+            <i class="fa-solid fa-laptop-code"></i>
+        </div>
+    `;
+    return card;
+}
+
+// Show course details modal
+function showCourseDetails(courseId) {
+    const course = courses.find(c => c.id === courseId);
+    if (!course) return;
+    document.getElementById('course-img-container').innerHTML = `<img src="${course.img}" alt="${course.name}">`;
+    document.getElementById('course-img-row').innerHTML = `
+        <img src="${course.img}" alt="${course.name}">
+        <img src="${course.img}" alt="${course.name}">
+        <img src="${course.img}" alt="${course.name}">
+        <img src="${course.img}" alt="${course.name}">
+    `;
+    document.getElementById('course-description').innerHTML = `
+        <h3>${course.name}</h3>
+        <p><strong>Duration:</strong> ${course.duration}</p>
+        <p><strong>Level:</strong> ${course.level}</p>
+        <p><strong>Price:</strong> Rs.${course.price}</p>
+        <div class="course-rating">
+            ${'<i class="fa-solid fa-star"></i>'.repeat(Math.floor(course.rating))}
+            ${'<i class="fa-regular fa-star"></i>'.repeat(5 - Math.floor(course.rating))}
+        </div>
+        <p>${course.description}</p>
+    `;
+    document.getElementById('course-topics').innerHTML = `
+        <h4>Topics Covered</h4>
+        <div>
+            ${course.topics.map(topic => `<div class="course-content-card">
+                <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80" alt="${topic}">
+                <h5>${topic}</h5>
+            </div>`).join('')}
+        </div>
+    `;
+    document.getElementById('course-projects').innerHTML = `
+        <h4>Projects You'll Build</h4>
+        <div>
+            ${course.projects.map(project => `<div class="course-content-card">
+                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="${project}">
+                <h5>${project}</h5>
+            </div>`).join('')}
+        </div>
+    `;
+    courseDialog.showModal();
+}
+
+// Event listeners
+document.addEventListener('click', (e) => {
+    // Only open modal if the button is not a close button
+    if (e.target.classList.contains('view-details') && !e.target.id.startsWith('close-course')) {
+        const courseId = parseInt(e.target.getAttribute('data-id'));
+        showCourseDetails(courseId);
+    }
+});
+closeCourseBtn.addEventListener('click', () => { courseDialog.close(); });
+closeCourseBottomBtn.addEventListener('click', () => { courseDialog.close(); });
+
+// Search functionality
+searchBtn.addEventListener('click', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    if (searchTerm) {
+        const filtered = courses.filter(course => 
+            course.name.toLowerCase().includes(searchTerm) || 
+            course.description.toLowerCase().includes(searchTerm) ||
+            course.topics.some(topic => topic.toLowerCase().includes(searchTerm))
+        );
+        displayCourses(filtered);
+    } else {
+        displayCourses(courses);
+    }
+});
+
+// Filter by level
+document.getElementById('level').addEventListener('change', (e) => {
+    const level = e.target.value;
+    if (level) {
+        const filtered = courses.filter(course => course.level === level);
+        displayCourses(filtered);
+    } else {
+        displayCourses(courses);
+    }
+});
+
+// Sort by price
+document.getElementById('lowToHigh').addEventListener('click', () => {
+    const sorted = [...courses].sort((a, b) => a.price - b.price);
+    displayCourses(sorted);
+});
+document.getElementById('highToLow').addEventListener('click', () => {
+    const sorted = [...courses].sort((a, b) => b.price - a.price);
+    displayCourses(sorted);
+});
+
+// Filter by rating
+document.querySelectorAll('.filter-rating > div').forEach(div => {
+    div.addEventListener('click', () => {
+        const rating = parseInt(div.getAttribute('data'));
+        const filtered = courses.filter(course => Math.floor(course.rating) >= rating);
+        displayCourses(filtered);
+    });
+});
+
+// Filter by duration
+document.querySelectorAll('.filter-duration-option').forEach(div => {
+    div.addEventListener('click', () => {
+        const duration = div.getAttribute('data-value');
+        const filtered = courses.filter(course => course.duration.includes(duration.split(' ')[0]));
+        displayCourses(filtered);
+    });
+});
+
+// Column layout toggle
+col2Btn.addEventListener('click', () => {
+    currentCols = 2;
+    setGridColumns(currentCols);
+    col2Btn.classList.add('col-active');
+    col3Btn.classList.remove('col-active');
+});
+col3Btn.addEventListener('click', () => {
+    currentCols = 3;
+    setGridColumns(currentCols);
+    col3Btn.classList.add('col-active');
+    col2Btn.classList.remove('col-active');
+});
+function setGridColumns(cols) {
+    blankContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+}
+</script>
+</html>

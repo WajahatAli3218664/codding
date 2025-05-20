@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/x-icon" href="/assets/brand-icon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./main.css">
+    <title>CODINCO | Testimonials</title>
+    <style>
+        .menu-btn{position:absolute;top: 30px;right: 0px;width: 30px;cursor: pointer;display: none;}
+        .feedback{padding-block: 5rem;}
+        .feedback h1 span{color:var(--highlight);}
+        #testimonials-main{padding-block: 3rem;position:relative;margin-bottom: 20em;min-height: 100vh;}
+        .feedback-form{position:absolute;bottom:-12%;left:50%;transform: translateX(-50%);z-index: 100;width:min(95%,30rem);margin-inline: auto;background-color: var(--background-dark);padding:2rem;color:var(--background-dark);border-radius: 2rem;display:flex;flex-direction: column;align-items: center;border:8px solid var(--white);}
+        .feedback-form h3{text-align: center;}
+        .feedback-form h3 span{color:var(--highlight);}
+        .feedback-form>input,.feedback-form>select,.feedback-form>textarea{align-self: stretch;border-radius: 0.5rem;border:none;margin-bottom: 1rem;padding: 0.5rem 1rem;}
+        .feedback-form>textarea{margin-bottom: 2rem;}
+        .feedback-form label{text-transform: uppercase;letter-spacing: 2px;align-self: flex-start;margin-bottom: 0.5rem;color:var(--white-light);font-size:var(--nav-link);}
+        #testimonial-grid{display:grid;grid-template-columns: 1fr 1fr 1fr;gap:1rem;background-color: transparent;border:8px solid var(--white);border-radius: 4rem;padding:2rem;padding-bottom: 10rem;position: relative;}
+        #loader {display: none;width: 150px;height: 150px;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);z-index: 10000;}
+        #testimonial-grid .card{background-color: var(--background-dark);box-shadow: 0 2px 5px 0 rgba(255, 255, 255, 0.1);position: relative;overflow: hidden;text-align: right;padding-bottom: 1rem;transition: box-shadow 0.2s ease-out;}
+        #testimonial-grid .card:hover{box-shadow: 2px 4px 10px 5px rgba(255, 255,255, 0.1);}
+        #testimonial-grid .card i{position: absolute;font-size: 6rem;color:var(--background-light);opacity: 0.3;top:-2%;left:5%;}
+        #testimonial-grid .card img{width: 6rem;margin-left: auto;margin-bottom: 0.5rem;border-radius: 50%;border:2px solid var(--background-light);}
+        #testimonial-grid .card p{font-size: var(--nav-link);width: 100%;letter-spacing: 1px;line-height: 1.3;margin-bottom: 1rem;}
+        .responsive_char{font-size: var(--h1);}
+        #testimonial-grid .card h3{margin-bottom: 0.75rem;}
+        .message {position: fixed;top: 20px;right: 20px;padding: 15px 25px;border-radius: 5px;color: white;z-index: 1000;animation: slideIn 0.5s, fadeOut 0.5s 2.5s;animation-fill-mode: forwards;display: none;}
+        @keyframes slideIn {from {right: -300px; opacity: 0;}to {right: 20px; opacity: 1;}}
+        @keyframes fadeOut {from {right: 20px; opacity: 1;}to {right: -300px; opacity: 0;}}
+        .success {background-color: #4CAF50;}
+        .warning {background-color: #ff9800;}
+        .error {background-color: #f44336;}
+        .delete-btn {position: absolute;bottom: 10px;left: 10px;background: #ff4444;color: white;border: none;border-radius: 50%;width: 30px;height: 30px;cursor: pointer;display: flex;align-items: center;justify-content: center;transition: all 0.3s ease;}
+        .delete-btn:hover {background: #cc0000;transform: scale(1.1);}
+        .faq-section {background-color: var(--background-dark);padding: 3rem;margin: 5rem 0;border-radius: 1rem;}
+        .faq-section h2 {text-align: center;margin-bottom: 2rem;color: var(--highlight);}
+        .faq-container {max-width: 800px;margin: 0 auto;}
+        .faq-item {margin-bottom: 1rem;border: 1px solid var(--background-light);border-radius: 0.5rem;overflow: hidden;}
+        .faq-question {padding: 1rem;background-color: var(--background-dark);color: var(--white);cursor: pointer;display: flex;justify-content: space-between;align-items: center;transition: background-color 0.3s ease, color 0.3s ease;}
+        .faq-question:hover {background-color: var(--highlight);color: var(--background-dark);}
+        .faq-toggle {font-weight: bold;transition: transform 0.3s ease;}
+        .faq-toggle.active {transform: rotate(45deg);}
+        .faq-answer {padding: 0 1rem;max-height: 0;overflow: hidden;transition: max-height 0.3s ease-out, padding 0.3s ease-out, background-color 0.3s ease;background-color: #e0f2f1;color: #333;}
+        .faq-answer.active {padding: 1rem;max-height: 500px;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);background-color: black;color: white;}
+        @media screen and (max-width:1020px){
+            .feedback{padding-block: 5rem;}
+            #testimonials-main{padding-block: 3rem;position:relative;margin-bottom: 20em;}
+            .feedback-form{position:absolute;bottom:-8%;left:50%;transform: translateX(-50%);z-index: 100;width:min(95%,30rem);margin-inline: auto;background-color: var(--background-dark);padding:2rem;color:var(--background-dark);border-radius: 2rem;display:flex;flex-direction: column;align-items: center;border:8px solid var(--white);}
+            #testimonial-grid{display:grid;grid-template-columns: 1fr 1fr ;gap:1rem;background-color: transparent;border:8px solid var(--white);border-radius: 4rem;padding:2rem;padding-bottom: 10rem;}
+            .responsive_char{font-size: 10vh;}
+        }
+        @media screen and (max-width: 700px){
+            .feedback{padding-block: 5rem;}
+            #testimonials-main{padding-block: 3rem;position:relative;margin-bottom: 20em;}
+            .feedback-form{bottom:-5%;left:50%;transform: translateX(-50%);z-index: 100;width:min(70%,30rem);margin-inline: auto;background-color: var(--background-dark);padding:2rem;color:var(--background-dark);border-radius: 2rem;display:flex;flex-direction: column;align-items: center;border:8px solid var(--white);}
+            #testimonial-grid{display:grid;grid-template-columns: repeat(1,1fr);gap:1rem;background-color: transparent;border:8px solid var(--white);border-radius: 4rem;padding:2rem;padding-bottom: 10rem;}
+            .responsive_char{font-size: 8vh;}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <img src="c:\Users\AM BUSINESS\Downloads\Purple_and_White_Modern_Computer_Service___Repair_Logo__1_-removebg-preview.png" alt="CODINCO Logo">
+            <ul>
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/destination.html">Curriculum</a></li>
+                <li><a href="/feedback.html">Testimonials</a></li>
+                <li><a href="/prices.html">Pricing</a></li>
+            </ul>
+            <div id="login-container">
+                <a href="./login.html" id="loginBtn"><i class="fa-solid fa-user" id="login-btn"></i></a>
+                <div style="display: none;">
+                    <a href='./checkout.html'><i class="fa-solid fa-cart-shopping" style="margin-right:1rem"></i></a>
+                    <a href="/" id="logout-btn" class='btn-small' style='border-radius:50px;color:var(--white)'>Log Out</a>
+                </div>       
+            </div>
+            <div class="responsive-nav">
+                <i class="fa-solid fa-bars" style="color:var(--white-light)"></i>
+                <div class="responsive-nav-content">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/destination.html">Curriculum</a></li>
+                        <li><a href="/feedback.html">Testimonials</a></li>
+                        <li><a href="/prices.html">Pricing</a></li>
+                    </ul>
+                    <div id="login-container">
+                        <a href="./login.html" id="loginBtn"><i class="fa-solid fa-user" id="login-btn"></i></a>
+                        <div style="display: none;">
+                            <a href='./checkout.html'><i class="fa-solid fa-cart-shopping" style="margin-right:1rem"></i></a>
+                            <a href="/" id="logout-btn" class='btn-small' style='border-radius:50px;color:var(--white)'>Log Out</a>
+                        </div>       
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="container feedback fade-in">
+            <h1 class="responsive_char">What <span>Our Students</span> Say About CODINCO</h1>
+            <div id="testimonials-main">
+                <div id="testimonial-grid">
+                     <img src="./assets/Loader.svg" alt="loader" id="loader" />
+                </div>
+                <div class="feedback-form">
+                    <h3>Share Your <span>Experience</span> With Us!</h3>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Enter Your Name" required>
+                    <label for="rating">Rating</label>
+                    <input type="number" id="rating" min="1" max="5" placeholder="Enter Your Rating (1-5)" required>
+                    <label for="review">Your Feedback</label>
+                    <textarea name="review" id="review"  placeholder="Tell us about your learning experience"></textarea>
+                    <button class="btn">Submit Feedback</button>
+                </div>
+            </div>
+            <!-- FAQ Section -->
+            <div class="faq-section">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What will I learn in the CODINCO bootcamp?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our bootcamp covers full stack development including HTML, CSS, JavaScript, TypeScript, Next.js, and Python. You'll learn both frontend and backend development to become a well-rounded developer.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Do I need prior coding experience?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>No! Our beginner bootcamp is designed for people with no prior coding experience. We start from the very basics and gradually build up to more advanced concepts.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What are the class timings?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Classes are held in the evening from 9:00PM to 10:00PM to accommodate working professionals and students. The next batch starts on 1 June 2025.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What kind of support will I get after the bootcamp?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We provide career support including resume reviews, interview preparation, and job placement assistance. Our alumni also get access to exclusive job opportunities.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Can I pay in installments?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! We offer flexible monthly payment plans starting from just Rs. 1000/month. You can choose the plan that works best for your budget.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <section class="articles"></section>
+        <div class="container">
+            <h1>Get started and early <span>Update</span> about our bootcamp</h1>
+            <div class="searchbox">
+                <input type="text" placeholder="Enter your email">
+                <button class="btn" id="cta">Get Started</button>
+            </div>
+            <hr>
+            <div class="footer">
+                <img src="c:\Users\AM BUSINESS\Downloads\Purple_and_White_Modern_Computer_Service___Repair_Logo__1_-removebg-preview.png" alt="CODINCO Logo">
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/destination.html">Curriculum</a></li>
+                    <li><a href="/feedback.html">Testimonials</a></li>
+                    <li><a href="/prices.html">Pricing</a></li>
+                </ul>
+                <p><i class="fa-regular fa-copyright"></i> 2025 CODINCO</p>
+            </div>
+            <div class="socials">
+                <div class="social">
+                    <a href="https://www.instagram.com/codinco" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+                <div class="social">
+                    <a href="https://twitter.com/codinco" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+                <div class="social">
+                    <a href="https://www.facebook.com/codinco" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div id="message-container"></div>
+</body>
+</html>
+<script>
+    let obj={
+        '1': './assets/Avatar1.png',
+        '2': './assets/Avatar2.png',
+        '3': './assets/Avatar3.png',
+        '4': './assets/Avatar4.png',
+        '5': './assets/Avatar5.png',
+        '6': './assets/Avatar6.png',
+        '7': './assets/Avatar7.png',
+        '8': './assets/Avatar8.png',
+        '9': './assets/Avatar9.png',
+        '10': './assets/Avatar10.png',
+    }
+    let url = `https://mock-every-sunday-server.onrender.com/testimonials`;
+    let testimonials_main = document.querySelector('#testimonial-grid');
+    let name = document.getElementById('name');
+    let rating = document.getElementById('rating');
+    let textarea = document.getElementById('review');
+    let postBtn = document.querySelector('.btn');
+    let loader=document.getElementById('loader');
+    let messageContainer = document.getElementById('message-container');
+    let user;
+
+    // FAQ Toggle functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.nextElementSibling;
+            const toggle = question.querySelector('.faq-toggle');
+            answer.classList.toggle('active');
+            toggle.textContent = toggle.textContent === '+' ? '×' : '+';
+            toggle.classList.toggle('active');
+        });
+    });
+
+    function displayMessage(message, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        messageDiv.textContent = message;
+        messageContainer.appendChild(messageDiv);
+        messageDiv.style.display = 'block';
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 3000);
+    }
+
+    window.addEventListener('load',()=>{
+        loader.style.display='block';
+        fetchtestimonials(url);
+        getUser();
+    })
+    postBtn.addEventListener('click',postData);
+
+    async function postData(){
+        try{
+            if(!name.value || !rating.value || !textarea.value) {
+                displayMessage('Please fill all fields', 'error');
+                return;
+            }
+            if(rating.value < 1 || rating.value > 5) {
+                displayMessage('Rating must be between 1 and 5', 'error');
+                return;
+            }
+            let userdata = {
+                name: name.value,
+                rating: rating.value,
+                review: textarea.value,
+                imgAvatar: user ? user.imgAvatar : '1',
+                userId: user ? user.id : null
+            }
+            let response = await fetch(url,{
+                method:'POST',
+                headers:{
+                    "Content-type":"application/json",
+                },
+                body:JSON.stringify(userdata)
+            });
+            if(!response.ok) {
+                throw new Error('Failed to submit feedback');
+            }
+            let data = await response.json();
+            name.value="";
+            rating.value="";
+            textarea.value="";
+            displayMessage('Feedback Submitted Successfully!', 'success');
+            fetchtestimonials(url);
+        }
+        catch(error){
+            console.error('Error submitting feedback:', error);
+            displayMessage('Failed to submit feedback. Please try again later.', 'error');
+        }
+    }
+
+    async function getUser() {
+        try {
+            let id = JSON.parse(localStorage.getItem('userId'));
+            if(!id) return;
+            let userUrl = `https://mock-every-sunday-server.onrender.com/users?id=${id}`;
+            let res = await fetch(userUrl);
+            let data = await res.json();
+            if(data && data.length > 0) {
+                user = data[0];
+                name.value = user.name;
+            }
+        } catch (e) {
+            console.error('Error fetching user:', e);
+        }
+    }
+
+    async function fetchtestimonials(url){
+        try{
+            let response = await fetch(url);
+            if(!response.ok) {
+                throw new Error('Failed to fetch testimonials');
+            }
+            let testimonialsData = await response.json();
+            displaytestimonials(testimonialsData)
+        }
+        catch(error){
+            console.error('Error fetching testimonials:', error);
+            displayMessage('Failed to load testimonials. Please try again later.', 'error');
+        }
+    }
+    
+    function displaytestimonials(data){
+        loader.style.display='none';
+        testimonials_main.innerHTML=null;
+        data.forEach(item => {
+            let card = createTestimonialsCard(item);
+            testimonials_main.append(card);
+        });
+    }
+    
+    function createTestimonialsCard(item){
+        let card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.id = item.id;
+
+        let quote =document.createElement('i');
+        let img = document.createElement('img');
+        if(obj[item.imgAvatar]){
+            img.setAttribute('src', obj[item.imgAvatar]);
+        }else{
+            img.style.display = 'none';
+        }
+        quote.classList.add('fa-solid','fa-quote-left');
+
+        let headName = document.createElement('div');
+        headName.className = 'headName';
+
+        let nameEl = document.createElement('h4');
+        nameEl.className = 'name';
+        nameEl.textContent = item.name;
+
+        let ratingEl = document.createElement('h3');
+        ratingEl.className = 'rating';
+        ratingEl.textContent = item.rating+'⭐';
+
+        let review = document.createElement('p');
+        review.className = 'review';
+        review.textContent = item.review;
+
+        headName.append(nameEl,ratingEl);
+        card.append(quote,img,headName,review);
+
+        // Show delete button for ALL reviews (for demo/mock server)
+        let deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteTestimonial(item.id);
+        });
+        card.appendChild(deleteBtn);
+
+        return card;
+    }
+
+    async function deleteTestimonial(id) {
+        if (!confirm('Are you sure you want to delete this review?')) return;
+        try {
+            // Try DELETE
+            let response = await fetch(`${url}/${id}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                displayMessage('Review deleted successfully', 'success');
+                fetchtestimonials(url);
+                return;
+            }
+            // Try PUT with empty object (some mock servers support this)
+            let putRes = await fetch(`${url}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+            if (putRes.ok) {
+                displayMessage('Review deleted (PUT fallback)', 'success');
+                fetchtestimonials(url);
+                return;
+            }
+            // Try PATCH with deleted:true (soft delete)
+            let patchRes = await fetch(`${url}/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ deleted: true })
+            });
+            if (patchRes.ok) {
+                displayMessage('Review marked as deleted (PATCH fallback)', 'success');
+                fetchtestimonials(url);
+                return;
+            }
+            throw new Error('Failed to delete review');
+        } catch (error) {
+            console.error('Error deleting review:', error);
+            displayMessage('Failed to delete review. This may be a limitation of the mock server.', 'error');
+        }
+    }
+</script>
