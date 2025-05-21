@@ -111,7 +111,7 @@ How to Enroll
 
 
 
-Visit our enrollment portal: https://codinco.netlify.app
+Visit our enrollment portal: https://codinco-eta.vercel.app/
 
 
 
